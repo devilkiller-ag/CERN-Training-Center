@@ -46,6 +46,7 @@ const linkStyle = {
 const barStyle = {
   display: "flex",
   gap: 15,
+  alignItems: "center",
 }
 
 const statusDropdownDivStyles = {
@@ -80,6 +81,11 @@ const statusDropdownOptionsStyles = {
   cursor: "pointer",
 }
 
+const filterBarStyle = {
+  display: "flex",
+  gap: 90,
+}
+
 /** Store Status Options */
 const statusOptions = ["All", "Stable", "Beta" , "Alpha"]
 
@@ -87,6 +93,17 @@ const IndexPage = ({ data }) => {
 
   const [ isStatusDropdownActive, setIsStatusDropdownActive ] = useState(false);
   const [ selectedStatus, setSelectedStatus ] = useState('All');
+  const [displayWithOnlyVideos, setDisplayWithOnlyVideos] = useState(false);
+
+  const statusIcon = (status) => {
+    if (status === 'stable') {
+      return '🟢 Stable' // Replace with icons
+    } else if (status === 'beta') {
+      return '🟠 Beta'
+    } else if (status === 'alpha') {
+      return '🟡 Alpha'
+    }
+  }
 
   return (
     <main style={pageStyles}>
@@ -96,29 +113,36 @@ const IndexPage = ({ data }) => {
         <span style={headingAccentStyles}>— Training Center 📖</span>
       </h1>
 
-      <div className="statusDropdown" style={statusDropdownDivStyles}>
-        <div className="statusDropdownButton" style={statusDropdownBtnStyles} onClick={() => {setIsStatusDropdownActive((prev) => !prev)}}>
-          <span>{selectedStatus}</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> {/** Dropdown Icon */}
-            <path d="M8 11L3 5.99999L3.7 5.29999L8 9.59999L12.3 5.29999L13 5.99999L8 11Z" fill="#212529"/>
-          </svg>
+      <div>
+        <div>
+          <input type="checkbox" id="displayWithOnlyVideos" value={displayWithOnlyVideos} onChange={() => setDisplayWithOnlyVideos(!displayWithOnlyVideos)} />
+          <label htmlFor="displayWithOnlyVideos">Videos</label>
         </div>
-        {
-          isStatusDropdownActive && <div style={statusDropdownStyles} className="statusOptions">
-            {
-              statusOptions.map((option) => {
-                return (
-                  <div style={statusDropdownOptionsStyles} onClick={() => {
-                    setSelectedStatus(option)
-                    setIsStatusDropdownActive(false)
-                  }}>
-                    {option}
-                  </div>
-                )
-              })
-            }
+
+        <div className="statusDropdown" style={statusDropdownDivStyles}>
+          <div className="statusDropdownButton" style={statusDropdownBtnStyles} onClick={() => {setIsStatusDropdownActive((prev) => !prev)}}>
+            <span>{selectedStatus}</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> {/** Dropdown Icon */}
+              <path d="M8 11L3 5.99999L3.7 5.29999L8 9.59999L12.3 5.29999L13 5.99999L8 11Z" fill="#212529"/>
+            </svg>
           </div>
-        }
+          {
+            isStatusDropdownActive && <div style={statusDropdownStyles} className="statusOptions">
+              {
+                statusOptions.map((option) => {
+                  return (
+                    <div style={statusDropdownOptionsStyles} onClick={() => {
+                      setSelectedStatus(option)
+                      setIsStatusDropdownActive(false)
+                    }}>
+                      {option}
+                    </div>
+                  )
+                })
+              }
+            </div>
+          }
+        </div>
       </div>
 
       <ul style={listStyles}>
@@ -130,6 +154,7 @@ const IndexPage = ({ data }) => {
                 <h1 style={listItemStyles}>{edge.node.name}</h1>
                 <p style={paragraphStyles}>{edge.node.description}</p>
                 <div style={barStyle}>
+                  {statusIcon(edge.node.status)}
                   <a style={linkStyle} href={edge.node.repository}>Repository</a>
                   <a style={linkStyle} href={edge.node.repository}>Webpage</a>
                   {edge.node.videos ? <a style={linkStyle} href={edge.node.videos}>Videos</a> : ''}
@@ -145,6 +170,7 @@ const IndexPage = ({ data }) => {
                   <h1 style={listItemStyles}>{edge.node.name}</h1>
                   <p style={paragraphStyles}>{edge.node.description}</p>
                   <div style={barStyle}>
+                    {statusIcon(edge.node.status)}
                     <a style={linkStyle} href={edge.node.repository}>Repository</a>
                     <a style={linkStyle} href={edge.node.repository}>Webpage</a>
                     {edge.node.videos ? <a style={linkStyle} href={edge.node.videos}>Videos</a> : ''}
