@@ -81,20 +81,17 @@ const statusDropdownOptionsStyles = {
   cursor: "pointer",
 }
 
-const filterBarStyle = {
-  display: "flex",
-  gap: 90,
-}
+// const filterBarStyle = {
+//   display: "flex",
+//   gap: 90,
+// }
 
 /** Store Status Options */
 const statusOptions = ["All", "Stable", "Beta" , "Alpha"]
 
 const IndexPage = ({ data }) => {
 
-  const [ isStatusDropdownActive, setIsStatusDropdownActive ] = useState(false);
-  const [ selectedStatus, setSelectedStatus ] = useState('All');
-  const [displayWithOnlyVideos, setDisplayWithOnlyVideos] = useState(false);
-
+  /** HELPER FUNCTION: Returns the Icon + Text showing the Status of Module */
   const statusIcon = (status) => {
     if (status === 'stable') {
       return '🟢 Stable' // Replace with icons
@@ -105,27 +102,38 @@ const IndexPage = ({ data }) => {
     }
   }
 
+
+  const [ isStatusDropdownActive, setIsStatusDropdownActive ] = useState(false);
+  const [ selectedStatus, setSelectedStatus ] = useState('All');
+  const [displayWithOnlyVideos, setDisplayWithOnlyVideos] = useState(false);
+
   return (
     <main style={pageStyles}>
+      {/** HEADER */}
       <h1 style={headingStyles}>
         CERN
         <br />
         <span style={headingAccentStyles}>— Training Center 📖</span>
       </h1>
 
+      {/** FILTER OPTION */}
       <div>
+        {/** CHECKBOX: To show Modules having Video Playlists (TO BE COMPLETED)  */}
         <div>
           <input type="checkbox" id="displayWithOnlyVideos" value={displayWithOnlyVideos} onChange={() => setDisplayWithOnlyVideos(!displayWithOnlyVideos)} />
           <label htmlFor="displayWithOnlyVideos">Videos</label>
         </div>
 
+        {/** DROPDOWN: To set filter according to the status of modules */}
         <div className="statusDropdown" style={statusDropdownDivStyles}>
+          {/** Drobdown Button */}
           <div className="statusDropdownButton" style={statusDropdownBtnStyles} onClick={() => {setIsStatusDropdownActive((prev) => !prev)}}>
-            <span>{selectedStatus}</span>
+            <span>{selectedStatus}</span> {/** Display the selected status on the drodown header */}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> {/** Dropdown Icon */}
-              <path d="M8 11L3 5.99999L3.7 5.29999L8 9.59999L12.3 5.29999L13 5.99999L8 11Z" fill="#212529"/>
+              <path d="M8 11L3 5.99999L3.7 5.29999L8 9.59999L12.3 5.29999L13 5.99999L8 11Z" fill="#212529"/> 
             </svg>
           </div>
+          {/** Drobdown Content */}
           {
             isStatusDropdownActive && <div style={statusDropdownStyles} className="statusOptions">
               {
@@ -145,9 +153,11 @@ const IndexPage = ({ data }) => {
         </div>
       </div>
 
+      {/** Diplay all the modules available according to filter */}
       <ul style={listStyles}>
         {
           selectedStatus.toLowerCase() === "all" ? 
+          // If "All" or "no status filter" is selected, then show all the modules
           data.allTrainingModulesYaml.edges.map((edge) => {
             return (
               <article style={articleStyles} key={edge.node.id}>
@@ -163,6 +173,7 @@ const IndexPage = ({ data }) => {
             )
           })
           :
+          // Else show the modules with the selected status filter
           data.allTrainingModulesYaml.edges.map((edge) => {
             if (edge.node.status === selectedStatus.toLowerCase()) {
               return ( 
@@ -185,6 +196,7 @@ const IndexPage = ({ data }) => {
   )
 }
 
+// GraphQL Querry to pull the data from the data layer
 export const query = graphql`
   query {
     allTrainingModulesYaml {
@@ -204,6 +216,7 @@ export const query = graphql`
   }
 `
 
+// Header of Homepage
 export const Head = () => <title>CERN Training Center</title>
 
 export default IndexPage

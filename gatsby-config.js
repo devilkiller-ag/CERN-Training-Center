@@ -7,11 +7,11 @@ module.exports = {
     siteUrl: `https://www.yourdomain.tld`
   },
   plugins: [
-    `gatsby-transformer-yaml`,
+    `gatsby-transformer-yaml`, // To get the data from data source (training-modules.yaml) to data layer
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/training-modules/`,
+        path: `${__dirname}/training-modules/`, // Path of data source
       },
     },
   ],
